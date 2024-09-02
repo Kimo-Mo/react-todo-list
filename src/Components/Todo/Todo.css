@@ -1,0 +1,26 @@
+.todoCard {
+  transition: 0.2s;
+}
+
+.todoCard:hover {
+  box-shadow: 0 7px 7px rgba(0, 0, 0, 0.4);
+}
+
+.iconBTn {
+  transition: background-color 0.2s;
+}
+
+.iconBTn[aria-label="done"]:hover {
+  background-color: #2e7d32 !important;
+  color: white !important;
+}
+
+.iconBTn[aria-label="edit"]:hover {
+  background-color: #42a5f5 !important;
+  color: white !important;
+}
+
+.iconBTn[aria-label="delete"]:hover {
+  background-color: #d32f2f !important;
+  color: white !important;
+}
