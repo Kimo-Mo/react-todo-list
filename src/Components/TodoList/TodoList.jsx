@@ -15,30 +15,43 @@ import Todo from "../Todo/Todo";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Divider from "@mui/material/Divider";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MaterialUISwitch } from "../MaterialUISwitch/MaterialUISwitch";
 import Grid from "@mui/material/Grid2";
 
 import { v4 as uuidv4 } from "uuid";
 import { TodosContext } from "../../Contexts/TodosContext";
 
-export default function TodoList({ theme, handleThemeMode }) {
+export default function TodoList({ theme, handleThemeMode, themeMode }) {
   const { todos, setTodos } = useContext(TodosContext);
   const [titleInput, setTitleInput] = useState("");
-  const [alignment, setAlignment] = useState("left");
+  const [todosType, setTodosType] = useState("all");
+
+  const handleTodosType = (event) => {
+    setTodosType(event.target.value);
+  };
+
+  const completedTodos = todos.filter((t) => t.isCompleted);
+  const inCompletedTodos = todos.filter((t) => !t.isCompleted);
+
+  let todosToBeRendered = todos;
+  if (todosType == "complete") todosToBeRendered = completedTodos;
+  else if (todosType == "incomplete") todosToBeRendered = inCompletedTodos;
+  else todosToBeRendered = todos;
 
   const todosJsx =
-    todos.length == 0 ? (
+    todosToBeRendered.length == 0 ? (
       <h2 style={{ marginBlock: "20px" }}>أضف بعض المهام</h2>
     ) : (
-      todos.map((todo) => {
+      todosToBeRendered.map((todo) => {
         return <Todo key={todo.id} todo={todo} />;
       })
     );
 
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
+  useEffect(() => {
+    const storageTodos = JSON.parse(localStorage.getItem("todos"));
+    setTodos(storageTodos);
+  }, [setTodos]);
 
   function handleAddClick() {
     if (titleInput !== "") {
@@ -48,14 +61,16 @@ export default function TodoList({ theme, handleThemeMode }) {
         description: "",
         isCompleted: false,
       };
-      setTodos([...todos, newTodo]);
+      const updatedTodos = [...todos, newTodo];
+      setTodos(updatedTodos);
+      localStorage.setItem("todos", JSON.stringify(updatedTodos)) ?? [];
       setTitleInput("");
     }
   }
 
   return (
     <Container maxWidth="md">
-      <Card sx={{ minWidth: 275 }}>
+      <Card sx={{ minWidth: 275, maxHeight: "90vh", overflowY: "scroll" }}>
         <CardContent
           sx={{
             display: "flex",
@@ -64,15 +79,15 @@ export default function TodoList({ theme, handleThemeMode }) {
             alignItems: "center",
           }}>
           <FormControlLabel
-            sx={{placeSelf:"start"}}
+            sx={{ placeSelf: "start" }}
             control={
               <MaterialUISwitch
                 sx={{ m: 1 }}
                 onChange={() => handleThemeMode()}
+                checked={themeMode === "dark"}
               />
             }
             label="المظهر"
-            onChange={() => handleThemeMode()}
           />
           <Typography variant="h3">قائمة المهام</Typography>
           <Divider sx={{ width: "100%", paddingBlock: "10px" }} />
@@ -81,9 +96,10 @@ export default function TodoList({ theme, handleThemeMode }) {
           ) : (
             <ToggleButtonGroup
               style={{ marginBlock: "20px", gap: "10px" }}
-              value={alignment}
+              value={todosType}
+              color="error"
               exclusive
-              onChange={handleAlignment}
+              onChange={handleTodosType}
               aria-label="text alignment">
               <ToggleButton
                 value="all"
@@ -137,6 +153,7 @@ export default function TodoList({ theme, handleThemeMode }) {
                 onClick={handleAddClick}
                 color="primary"
                 variant="contained"
+                disabled={titleInput.length == 0}
                 sx={{
                   width: "100% !important",
                   height: "100%",

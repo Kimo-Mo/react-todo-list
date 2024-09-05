@@ -6,6 +6,25 @@
   box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #283593;
+  transition: 0.1s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1565c0;
+}
+
 body {
   font-family: Alexandria, sans-serif;
   background-color: #252525;

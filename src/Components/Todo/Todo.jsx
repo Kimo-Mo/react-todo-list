@@ -38,11 +38,14 @@ const Todo = ({ todo }) => {
       return t;
     });
     setTodos(updatedTodos);
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
   // ======= Task Done Click =======
   // ======= Delete Task Confirm Click =======
   function handleDeleteClick() {
-    setTodos(todos.filter((t) => t.id !== todo.id));
+    const updatedTodos = todos.filter((t) => t.id !== todo.id);
+    setTodos(updatedTodos);
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
   // ======= Delete Task Confirm Click =======
   // ======= Task Edit Click =======
@@ -58,6 +61,7 @@ const Todo = ({ todo }) => {
         } else return t;
       });
       setTodos(updatedTodos);
+      localStorage.setItem("todos", JSON.stringify(updatedTodos));
       setOpenEditPopUp(false);
     }
   }
@@ -93,6 +97,11 @@ const Todo = ({ todo }) => {
           هل انت متأكد من رغبتك في حذف هذه المهمة؟
         </DialogTitle>
         <DialogContent>
+          <DialogContentText
+            style={{fontSize:"20px" , marginBottom: "10px" }}
+            id="alert-dialog-description">
+            {todo.title}
+          </DialogContentText>
           <DialogContentText id="alert-dialog-description">
             لا يمكنك التراجع عن الحذف بعد إتمامه
           </DialogContentText>
@@ -147,9 +156,17 @@ const Todo = ({ todo }) => {
             }
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEditPopUp}>إلغاء</Button>
-          <Button onClick={handleEditClick}>تعديل</Button>
+        <DialogActions sx={{ padding: "15px" }}>
+          <Button
+            sx={{ marginLeft: "10px" }}
+            variant="contained"
+            color="primary"
+            onClick={handleCloseEditPopUp}>
+            إلغاء
+          </Button>
+          <Button variant="contained" color="error" onClick={handleEditClick}>
+            تعديل
+          </Button>
         </DialogActions>
       </Dialog>
       {/* Edit pup-up  */}
@@ -167,7 +184,13 @@ const Todo = ({ todo }) => {
             spacing={2}
             sx={{ alignItems: "center", flexWrap: "wrap" }}>
             <Grid size={{ xs: 12, md: 8 }} sx={{ textAlign: "right" }}>
-              <Typography variant="h5">{todo.title}</Typography>
+              <Typography
+                variant="h5"
+                style={{
+                  textDecoration: todo.isCompleted ? "line-through" : "none",
+                }}>
+                {todo.title}
+              </Typography>
               <Typography variant="h6" sx={{ color: "#bdbdbd" }}>
                 {todo.description}
               </Typography>
