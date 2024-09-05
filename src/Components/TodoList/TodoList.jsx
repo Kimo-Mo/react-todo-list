@@ -49,7 +49,7 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
     );
 
   useEffect(() => {
-    const storageTodos = JSON.parse(localStorage.getItem("todos"));
+    const storageTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
     setTodos(storageTodos);
   }, [setTodos]);
 
@@ -63,7 +63,7 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
       };
       const updatedTodos = [...todos, newTodo];
       setTodos(updatedTodos);
-      localStorage.setItem("todos", JSON.stringify(updatedTodos)) ?? [];
+      localStorage.setItem("todos", JSON.stringify(updatedTodos));
       setTitleInput("");
     }
   }
