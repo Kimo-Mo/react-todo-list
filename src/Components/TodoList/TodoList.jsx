@@ -15,7 +15,7 @@ import Todo from "../Todo/Todo";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Divider from "@mui/material/Divider";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { MaterialUISwitch } from "../MaterialUISwitch/MaterialUISwitch";
 import Grid from "@mui/material/Grid2";
 
@@ -31,9 +31,14 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
     setTodosType(event.target.value);
   };
 
-  const completedTodos = todos.filter((t) => t.isCompleted);
-  const inCompletedTodos = todos.filter((t) => !t.isCompleted);
-
+  const completedTodos = useMemo(() => {
+    return todos.filter((t) => {
+      return t.isCompleted;
+    });
+  }, [todos]);
+  const inCompletedTodos = useMemo(() => {
+    return todos.filter((t) => !t.isCompleted);
+  }, [todos]);
   let todosToBeRendered = todos;
   if (todosType == "complete") todosToBeRendered = completedTodos;
   else if (todosType == "incomplete") todosToBeRendered = inCompletedTodos;
