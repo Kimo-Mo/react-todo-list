@@ -10,6 +10,7 @@ import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import IconButton from "@mui/material/IconButton";
 import { TodosContext } from "../../Contexts/TodosContext";
 import { useContext } from "react";
+import { toast } from "react-toastify";
 
 const Todo = ({ todo, handleOpenEditPopUp, handleOpenDelPopUp }) => {
   const { todos, setTodos } = useContext(TodosContext);
@@ -18,6 +19,11 @@ const Todo = ({ todo, handleOpenEditPopUp, handleOpenDelPopUp }) => {
   function handleDoneClick() {
     const updatedTodos = todos.map((t) => {
       if (t.id == todo.id) {
+        if (!t.isCompleted) {
+          toast.success("تم الانتهاء من المهمة");
+        } else {
+          toast.success("تم التراجع عن الانتهاء من المهمة");
+        }
         t.isCompleted = !t.isCompleted;
       }
       return t;

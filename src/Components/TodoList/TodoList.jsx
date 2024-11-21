@@ -26,6 +26,7 @@ import Grid from "@mui/material/Grid2";
 
 import { v4 as uuidv4 } from "uuid";
 import { TodosContext } from "../../Contexts/TodosContext";
+import { toast } from "react-toastify";
 
 export default function TodoList({ theme, handleThemeMode, themeMode }) {
   const { todos, setTodos } = useContext(TodosContext);
@@ -70,6 +71,7 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
       setTodos(updatedTodos);
       localStorage.setItem("todos", JSON.stringify(updatedTodos));
       setTitleInput("");
+      toast.success("تم اضافة المهمة بنجاح");
     }
   }
   // ======= Delete Task Confirm Click =======
@@ -78,6 +80,7 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
     setOpenDelPopUp(false);
+    toast.success("تم حذف المهمة بنجاح");
   }
   // ======= Delete Task Confirm Click =======
   // ======= Task Edit Click =======
@@ -95,7 +98,8 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
       setTodos(updatedTodos);
       localStorage.setItem("todos", JSON.stringify(updatedTodos));
       setOpenEditPopUp(false);
-    }
+      toast.success("تم تعديل المهمة بنجاح");
+    } else toast.error("من فضلك ادخل عنوان المهمة");
   }
   // ======= Task Edit Click =======
 
