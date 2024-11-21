@@ -1,15 +1,6 @@
 /* eslint-disable react/prop-types */
 import "./Todo.css";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
@@ -18,16 +9,10 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import IconButton from "@mui/material/IconButton";
 import { TodosContext } from "../../Contexts/TodosContext";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
-const Todo = ({ todo }) => {
+const Todo = ({ todo, handleOpenEditPopUp, handleOpenDelPopUp }) => {
   const { todos, setTodos } = useContext(TodosContext);
-  const [openDelPopUp, setOpenDelPopUp] = useState(false);
-  const [openEditPopUp, setOpenEditPopUp] = useState(false);
-  const [updatedTodo, setUpdatedTodo] = useState({
-    title: todo.title,
-    description: todo.description,
-  });
 
   // ======= Task Done Click =======
   function handleDoneClick() {
@@ -41,135 +26,9 @@ const Todo = ({ todo }) => {
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
   // ======= Task Done Click =======
-  // ======= Delete Task Confirm Click =======
-  function handleDeleteClick() {
-    const updatedTodos = todos.filter((t) => t.id !== todo.id);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
-  // ======= Delete Task Confirm Click =======
-  // ======= Task Edit Click =======
-  function handleEditClick() {
-    if (updatedTodo.title.trim() !== "") {
-      const updatedTodos = todos.map((t) => {
-        if (t.id == todo.id) {
-          return {
-            ...t,
-            title: updatedTodo.title,
-            description: updatedTodo.description,
-          };
-        } else return t;
-      });
-      setTodos(updatedTodos);
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      setOpenEditPopUp(false);
-    }
-  }
-  // ======= Task Edit Click =======
-
-  // ======= Delete popUp =======
-  const handleOpenDelPopUp = () => {
-    setOpenDelPopUp(true);
-  };
-  const handleCloseDelPopUp = () => {
-    setOpenDelPopUp(false);
-  };
-  // ======= Delete popUp =======
-  // ======= Edit popUp =======
-  const handleOpenEditPopUp = () => {
-    setOpenEditPopUp(true);
-  };
-  const handleCloseEditPopUp = () => {
-    setOpenEditPopUp(false);
-  };
-  //  ======= Edit popUp =======
 
   return (
     <>
-      {/* Delete pup-up */}
-      <Dialog
-        sx={{ direction: "rtl" }}
-        open={openDelPopUp}
-        onClose={handleCloseDelPopUp}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">
-          هل انت متأكد من رغبتك في حذف هذه المهمة؟
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            style={{fontSize:"20px" , marginBottom: "10px" }}
-            id="alert-dialog-description">
-            {todo.title}
-          </DialogContentText>
-          <DialogContentText id="alert-dialog-description">
-            لا يمكنك التراجع عن الحذف بعد إتمامه
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ padding: "15px" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCloseDelPopUp}>
-            إغلاق
-          </Button>
-          <Button
-            sx={{ marginRight: "10px" }}
-            variant="contained"
-            color="error"
-            onClick={handleDeleteClick}
-            autoFocus>
-            نعم, قم بالحذف
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* Delete pup-up  */}
-      {/* Edit pup-up  */}
-      <Dialog
-        sx={{ direction: "rtl" }}
-        open={openEditPopUp}
-        onClose={handleCloseEditPopUp}>
-        <DialogTitle id="alert-dialog-title">تعديل المهمة</DialogTitle>
-        <DialogContent>
-          <TextField
-            style={{ marginBottom: "10px" }}
-            id="title"
-            label="عنوان المهمة"
-            name="taskTitle"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.title}
-            onChange={(e) =>
-              setUpdatedTodo({ ...updatedTodo, title: e.target.value })
-            }
-          />
-          <TextField
-            id="description"
-            label="تفاصيل المهمة"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.description}
-            onChange={(e) =>
-              setUpdatedTodo({ ...updatedTodo, description: e.target.value })
-            }
-          />
-        </DialogContent>
-        <DialogActions sx={{ padding: "15px" }}>
-          <Button
-            sx={{ marginLeft: "10px" }}
-            variant="contained"
-            color="primary"
-            onClick={handleCloseEditPopUp}>
-            إلغاء
-          </Button>
-          <Button variant="contained" color="error" onClick={handleEditClick}>
-            تعديل
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* Edit pup-up  */}
       <Card
         className="todoCard"
         sx={{ minWidth: 275, width: "100%", marginBlock: "10px" }}>
@@ -216,7 +75,7 @@ const Todo = ({ todo }) => {
               </IconButton>
 
               <IconButton
-                onClick={handleOpenEditPopUp}
+                onClick={() => handleOpenEditPopUp(todo)}
                 className="iconBTn"
                 sx={{
                   border: "2px solid #42a5f5",
@@ -228,7 +87,7 @@ const Todo = ({ todo }) => {
               </IconButton>
 
               <IconButton
-                onClick={handleOpenDelPopUp}
+                onClick={() => handleOpenDelPopUp(todo)}
                 className="iconBTn"
                 sx={{
                   border: "2px solid #d32f2f",
