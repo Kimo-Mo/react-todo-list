@@ -13,23 +13,20 @@ import { useContext } from "react";
 import { toast } from "react-toastify";
 
 const Todo = ({ todo, handleOpenEditPopUp, handleOpenDelPopUp }) => {
-  const { todos, setTodos } = useContext(TodosContext);
+  const { todos, dispatch } = useContext(TodosContext);
 
   // ======= Task Done Click =======
   function handleDoneClick() {
-    const updatedTodos = todos.map((t) => {
+    todos.map((t) => {
       if (t.id == todo.id) {
         if (!t.isCompleted) {
           toast.success("تم الانتهاء من المهمة");
         } else {
           toast.success("تم التراجع عن الانتهاء من المهمة");
         }
-        t.isCompleted = !t.isCompleted;
       }
-      return t;
     });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "TOGGLE_TODOS", payload: todo });
   }
   // ======= Task Done Click =======
 

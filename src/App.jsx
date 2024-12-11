@@ -1,12 +1,11 @@
 import TodoList from "./Components/TodoList/TodoList";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { TodosContext } from "./Contexts/TodosContext";
+import TodosProvider from "./Contexts/TodosContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 export default function App() {
-  const [todos, setTodos] = useState([]);
   const [themeMode, setThemeMode] = useState(
     localStorage.getItem("themeMode") || "light"
   );
@@ -31,7 +30,7 @@ export default function App() {
   });
   return (
     <ThemeProvider theme={theme}>
-      <>
+      <TodosProvider>
         <ToastContainer
           stacked
           position="bottom-left"
@@ -46,7 +45,7 @@ export default function App() {
           theme={themeMode}
           transition:Flip
         />
-        <TodosContext.Provider value={{ todos, setTodos }}>
+        
           <div
             style={{
               paddingBlock: "20px",
@@ -63,8 +62,8 @@ export default function App() {
               themeMode={themeMode}
             />
           </div>
-        </TodosContext.Provider>
-      </>
+        
+      </TodosProvider>
     </ThemeProvider>
   );
 }

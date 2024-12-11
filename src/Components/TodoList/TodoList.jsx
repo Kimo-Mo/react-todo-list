@@ -24,15 +24,16 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { MaterialUISwitch } from "../MaterialUISwitch/MaterialUISwitch";
 import Grid from "@mui/material/Grid2";
 
-import { v4 as uuidv4 } from "uuid";
-import { TodosContext } from "../../Contexts/TodosContext";
 import { toast } from "react-toastify";
+import { TodosContext } from "../../Contexts/TodosContext";
 
 export default function TodoList({ theme, handleThemeMode, themeMode }) {
-  const { todos, setTodos } = useContext(TodosContext);
+  const {todos , dispatch} = useContext(TodosContext)
+
   const [titleInput, setTitleInput] = useState(""); // task title input
   const [todosType, setTodosType] = useState("all"); // all, complete, inComplete
   const [todo, setTodo] = useState({}); // target todo for delete and edit popups
+
   // dialog states for delete and edit popups
   const [openDelPopUp, setOpenDelPopUp] = useState(false);
   const [openEditPopUp, setOpenEditPopUp] = useState(false);
@@ -55,30 +56,19 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
   else todosToBeRendered = todos;
 
   useEffect(() => {
-    const storageTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
-    setTodos(storageTodos);
-  }, [setTodos]);
+    dispatch({ type: "GET_TODOS" }); // get todos from local storage
+  }, [dispatch]);
 
   function handleAddClick() {
     if (titleInput !== "") {
-      const newTodo = {
-        id: uuidv4(),
-        title: titleInput,
-        description: "",
-        isCompleted: false,
-      };
-      const updatedTodos = [...todos, newTodo];
-      setTodos(updatedTodos);
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
+      dispatch({ type: "ADD_TODO", payload: { titleInput } });
       setTitleInput("");
       toast.success("تم اضافة المهمة بنجاح");
     }
   }
   // ======= Delete Task Confirm Click =======
   function handleDeleteClick() {
-    const updatedTodos = todos.filter((t) => t.id !== todo.id);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "DELETE_TODO", payload: { todo } });
     setOpenDelPopUp(false);
     toast.success("تم حذف المهمة بنجاح");
   }
@@ -86,17 +76,7 @@ export default function TodoList({ theme, handleThemeMode, themeMode }) {
   // ======= Task Edit Click =======
   function handleEditClick() {
     if (todo.title.trim() !== "") {
-      const updatedTodos = todos.map((t) => {
-        if (t.id == todo.id) {
-          return {
-            ...t,
-            title: todo.title,
-            description: todo.description,
-          };
-        } else return t;
-      });
-      setTodos(updatedTodos);
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
+      dispatch({ type: "EDIT_TODO", payload: { todo } });
       setOpenEditPopUp(false);
       toast.success("تم تعديل المهمة بنجاح");
     } else toast.error("من فضلك ادخل عنوان المهمة");
